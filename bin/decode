@@ -33,7 +33,7 @@ File.open('your.pub', 'rb') do |f|
     your_key = RbNaCl::PublicKey.new(f.read)
 end
 
-secret = JSON.load_file('secret')
+secret = JSON.parse(File.read('secret'))
 
 box = RbNaCl::Box.new(your_key, my_key)
 nonce = RbNaCl::Util.hex2bin(secret['nonce'])
