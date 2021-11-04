@@ -5,6 +5,7 @@ Using RbNaCl Public Key Cryptography
 ## Requirements
 
 * Ruby 3.0.2
+* Unzip or git clone and run `bundle install`
 
 ## Preparation
 
