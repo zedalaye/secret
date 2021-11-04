@@ -1,0 +1,42 @@
+#!/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+require 'rbnacl'
+require 'json'
+
+if ARGV.length == 0
+    puts "Missing secret"
+    puts "Syntax: bin/encode <secret>"
+    exit 0
+end
+
+if !File.exist?('my.key')
+    puts "Missing my.key"
+    puts "Use bin/generate to create a key"
+    exit 0
+end
+
+if !File.exist?('your.pub')
+    puts "Missing your.pub"
+    puts "Ask other party to generate a key and send its my.pub to you"
+    puts "Save received my.pub into your.pub"
+    exit 0
+end
+
+my_key = nil
+File.open('my.key', 'rb') do |f|
+    my_key = RbNaCl::PrivateKey.new(f.read)
+end
+
+your_key = nil
+File.open('your.pub', 'rb') do |f|
+    your_key = RbNaCl::PublicKey.new(f.read)
+end
+
+box = RbNaCl::Box.new(your_key, my_key)
+nonce = RbNaCl::Random.random_bytes(box.nonce_bytes)
+
+ciphertext = box.encrypt(nonce, ARGV[0])
+
+File.write('secret', { secret: RbNaCl::Util.bin2hex(ciphertext), nonce: RbNaCl::Util.bin2hex(nonce) }.to_json)

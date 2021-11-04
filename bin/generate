@@ -1,0 +1,16 @@
+#!/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+
+require 'rbnacl'
+
+key = RbNaCl::PrivateKey.generate
+File.open('my.key', 'wb') do |f|
+  f << key.to_bytes
+end
+
+public_key = key.public_key
+File.open('my.pub', 'wb') do |f|
+  f << public_key.to_bytes
+end
